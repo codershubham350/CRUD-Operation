@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Logged In</title>
+  </head>
+  <body>
+    <h1>Welcome User!! 😇</h1>
+    <form id="login">
+      <div class="container">
+        <div>
+          <input type="text" id="username" placeholder="Enter username" />
+          <input type="password" id="password" placeholder="Enter password" />
+        </div>
+        <input
+          type="checkbox"
+          onclick="myFunction()"
+          style="margin-left: 180px"
+        />
+        Show Password
+        <br /><br />
+        <input type="submit" value="Submit Form" />
+      </div>
+    </form>
+    <script>
+      const form = document.getElementById("login");
+      form.addEventListener("submit", userLoggedIn);
+
+      async function userLoggedIn(event) {
+        event.preventDefault();
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const checkResponse = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        }).then((res) => res.json());
+
+        if (checkResponse.status === "ok") {
+          console.log("Token received: ", checkResponse.data);
+          localStorage.setItem("token", checkResponse.data);
+          alert("User Successfully Logged in!!!");
+        } else {
+          alert(checkResponse.error);
+        }
+      }
+
+      function myFunction() {
+        const pass = document.getElementById("password");
+        if (pass.type === "password") {
+          pass.type = "text";
+        } else {
+          pass.type = "password";
+        }
+      }
+    </script>
+  </body>
+</html>
